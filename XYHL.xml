@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<xyhl>
+<!--contiene la configuración de los proyectos para hacer gráficos temporales con líneas horizontales: 
+1. db: base de datos
+2. select dedonde se extraen los datos-->
+	<project name="VM red piezo sequía 2018">
+		<db>r'c:\users\solis\documents\db\ipasub97.mdb'</db>
+		<select_master>
+		SELECT IPA1.COD, IPA1.X_UTM, IPA1.Y_UTM, IPA1.TOPONIMIA, IPA1.ACUIFERO
+		FROM IPA1
+		WHERE COD='';
+		</select_master>
+		<select_temporal>
+		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, IPA2.PNP, [ipa1].[z]-[pnp] AS CNP
+		FROM IPA1 INNER JOIN IPA2 ON IPA1.COD = IPA2.COD
+		WHERE IPA2.COD=?;
+		</select_temporal>
+		<select_horizontal_lines>
+		SELECT IPA1_LINEAS_HORIZONTALES.COD, IPA1_LINEAS_HORIZONTALES.NOMBRE_CORTO, IPA1_LINEAS_HORIZONTALES.TIPO, IPA1_LINEAS_HORIZONTALES.FECHA_INI, IPA1_LINEAS_HORIZONTALES.FECHA_FIN, IPA1_LINEAS_HORIZONTALES.LINEA, IPA1_LINEAS_HORIZONTALES.SITUACION, IPA1_LINEAS_HORIZONTALES.UNIDADES, [IPA1].[Z]-[LINEA] AS COTA_LINEA
+		FROM IPA1 INNER JOIN IPA1_LINEAS_HORIZONTALES ON IPA1.COD = IPA1_LINEAS_HORIZONTALES.COD
+		WHERE IPA1_LINEAS_HORIZONTALES=?;
+		</select_horizontal_lines>
+		<graph>
+			<title>Evolución piezométrica en el sondeo {}
+				<column>4</column>
+			</title>
+			<title>Acuífero {}
+				<column>5</column>
+			</title>
+			<y_axis_name>CNP m.s.n.m.</y_axis_name>
+		</graph>
+	</project>
+</xyhl>
