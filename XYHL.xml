@@ -4,11 +4,12 @@
 1. db: base de datos
 2. select dedonde se extraen los datos-->
 	<project name="VM red piezo sequía 2018">
-		<db>r'c:\users\solis\documents\db\ipasub97.mdb'</db>
+		<db>r'E:\BBDD\ipasub97.mdb'</db>
 		<select_master>
-		SELECT IPA1.COD, IPA1.X_UTM, IPA1.Y_UTM, IPA1.TOPONIMIA, IPA1.ACUIFERO
-		FROM IPA1
-		WHERE COD='';
+		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, IPA1_RED_CONTROL.red
+		FROM (ACUIFEROS INNER JOIN IPA1 ON ACUIFEROS.COD_ACU = IPA1.ACUIFERO) INNER JOIN IPA1_RED_CONTROL ON IPA1.COD = IPA1_RED_CONTROL.codigo
+		WHERE (((IPA1_RED_CONTROL.red)="BESMG7"))
+		ORDER BY IPA1.COD;
 		</select_master>
 		<select_temporal>
 		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, IPA2.PNP, [ipa1].[z]-[pnp] AS CNP
