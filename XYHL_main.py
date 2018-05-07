@@ -15,9 +15,10 @@ if __name__ == "__main__":
         from datetime import timedelta
         from time import time
         from XYHL import select_project, make_graphs
-        startTime = time()
 
         project = select_project(FILE_INI_XML)
+        startTime = time()
+
         make_graphs(project)
 
         xtime = time()-startTime

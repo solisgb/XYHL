@@ -4,31 +4,29 @@
 1. db: base de datos
 2. select dedonde se extraen los datos-->
 	<project name="VM red piezo sequía 2018">
-		<db>r'E:\BBDD\ipasub97.mdb'</db>
+		<db>E:\BBDD\ipasub97.mdb</db>
 		<select_master>
-		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, IPA1_RED_CONTROL.red
-		FROM (ACUIFEROS INNER JOIN IPA1 ON ACUIFEROS.COD_ACU = IPA1.ACUIFERO) INNER JOIN IPA1_RED_CONTROL ON IPA1.COD = IPA1_RED_CONTROL.codigo
-		WHERE (((IPA1_RED_CONTROL.red)="BESMG7"))
+		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, ACUIFEROS.MASUB, IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.UMBRAL, IPA1_UMBRAL.FECHA1, IPA1_UMBRAL.FECHA2
+		FROM (ACUIFEROS INNER JOIN IPA1 ON ACUIFEROS.COD_ACU = IPA1.ACUIFERO) INNER JOIN IPA1_UMBRAL ON IPA1.COD = IPA1_UMBRAL.COD
+		WHERE IPA1_UMBRAL.COD_UMBRAL='DIA20111215'
 		ORDER BY IPA1.COD;
+			<umbral_columns cod="5" umbral="6" fecha1="7" fecha2="8"/>
+			<parameter_select_data_column>2</parameter_select_data_column>
 		</select_master>
-		<select_temporal>
-		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, IPA2.PNP, [ipa1].[z]-[pnp] AS CNP
+		<select_data fecha_column="2" value_column="4">
+		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, [ipa1].[z]-[pnp] AS CNP
 		FROM IPA1 INNER JOIN IPA2 ON IPA1.COD = IPA2.COD
 		WHERE IPA2.COD=?;
-		</select_temporal>
-		<select_horizontal_lines>
-		SELECT IPA1_LINEAS_HORIZONTALES.COD, IPA1_LINEAS_HORIZONTALES.NOMBRE_CORTO, IPA1_LINEAS_HORIZONTALES.TIPO, IPA1_LINEAS_HORIZONTALES.FECHA_INI, IPA1_LINEAS_HORIZONTALES.FECHA_FIN, IPA1_LINEAS_HORIZONTALES.LINEA, IPA1_LINEAS_HORIZONTALES.SITUACION, IPA1_LINEAS_HORIZONTALES.UNIDADES, [IPA1].[Z]-[LINEA] AS COTA_LINEA
-		FROM IPA1 INNER JOIN IPA1_LINEAS_HORIZONTALES ON IPA1.COD = IPA1_LINEAS_HORIZONTALES.COD
-		WHERE IPA1_LINEAS_HORIZONTALES=?;
-		</select_horizontal_lines>
+		</select_data>
 		<graph>
 			<title>Evolución piezométrica en el sondeo {}
-				<column>4</column>
+				<column>2</column>
 			</title>
 			<title>Acuífero {}
-				<column>5</column>
+				<column>4</column>
 			</title>
 			<y_axis_name>CNP m.s.n.m.</y_axis_name>
 		</graph>
+		<dir_out></dir_out>
 	</project>
 </xyhl>
