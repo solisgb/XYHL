@@ -1,32 +1,50 @@
 <?xml version="1.0"?>
 <xyhl>
-<!--contiene la configuración de los proyectos para hacer gráficos temporales con líneas horizontales: 
+<!--
+Configuración de los proyectos para hacer gráficos temporales con umbrales: 
 1. db: base de datos
-2. select dedonde se extraen los datos-->
-	<project name="VM red piezo sequía 2018">
+2. select_master: select donde se extraen los codigos de los sondeos que se van a hacer los XY.
+   de las columnas de esta select se extraen además el título y el nombre del fichero XY
+2.1 parameter_select_data_column: número de columna en select_master que contiene el código del punto (COD)
+2.2 file name: nombre del fichero de salida. Debe contener al menos un {} para identificar unívocamente cada fichero
+		Contiene tantos tag column como {}. Column contiene el número de columna cuyo valor se sustituirá por cada {}
+-->
+	<project name="Cuanca Alta piezometría sequía 2018">
+		<dir_out>E:\WORK\CHS\Mingogil\xy</dir_out>
 		<db>E:\BBDD\ipasub97.mdb</db>
 		<select_master>
 		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, ACUIFEROS.MASUB, IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.UMBRAL, IPA1_UMBRAL.FECHA1, IPA1_UMBRAL.FECHA2
 		FROM (ACUIFEROS INNER JOIN IPA1 ON ACUIFEROS.COD_ACU = IPA1.ACUIFERO) INNER JOIN IPA1_UMBRAL ON IPA1.COD = IPA1_UMBRAL.COD
 		WHERE IPA1_UMBRAL.COD_UMBRAL='DIA20111215'
 		ORDER BY IPA1.COD;
-			<umbral_columns cod="5" umbral="6" fecha1="7" fecha2="8"/>
-			<parameter_select_data_column>2</parameter_select_data_column>
+			<parameter_select_data_column>1</parameter_select_data_column>
+			<file_name>{}_{}_{}.png
+				<column>3</column>
+				<column>1</column>
+				<column>2</column>
+			</file_name>
 		</select_master>
 		<select_data fecha_column="2" value_column="4">
 		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, [ipa1].[z]-[pnp] AS CNP
 		FROM IPA1 INNER JOIN IPA2 ON IPA1.COD = IPA2.COD
 		WHERE IPA2.COD=?;
 		</select_data>
-		<graph>
-			<title>Evolución piezométrica en el sondeo {}
+		<select_umbrales>
+			SELECT IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.UMBRAL, IPA1_UMBRAL.FECHA1, IPA1_UMBRAL.FECHA2
+			FROM IPA1_UMBRAL
+			WHERE IPA1_UMBRAL.COD=?
+			ORDER BY IPA1_UMBRAL.COD; 
+		</select_umbrales>
+		<graph y_axis_name='CNP m s.n.m.'>
+			<title>Evolución piezométrica en el sondeo {} ({})
 				<column>2</column>
+				<column>1</column>
 			</title>
 			<title>Acuífero {}
-				<column>4</column>
+				<column>3</column>
 			</title>
-			<y_axis_name>CNP m.s.n.m.</y_axis_name>
+			<legend text='{}' column='1' />
+			<legend text='Umbral {}' column='5'/> 
 		</graph>
-		<dir_out></dir_out>
 	</project>
 </xyhl>
