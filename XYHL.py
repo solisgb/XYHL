@@ -74,16 +74,22 @@ def make_graphs(project):
         fechas = [xy1[0] for xy1 in xy]
         values = [xy1[1] for xy1 in xy]
 
-        cur2.execute(select_umbrales, params)
+        cur2.execute(select_umbrales, params[0])
+        umbrales = [row_u for row_u in cur2]
+        nd = len(row_u)
+        if nd == 0:
+            print('{} no tiene definición de umbrales'.format(params[0]))
+            continue
 
-        ufechas= ufechas_get(project, row, fechas)
+        fechas_u = fechas_u_get(row_u, fechas)
+        values_u = values_u_get(row_u)
 
         stitle = get_title(project, row)
         legends = legends_get(project, row)
         file_name = file_name_get(project, row)
         dst = join(dir_out, file_name)
 
-#        XYt_1(fechas, values, ufechas, stitle, ylabel, legends, dst)
+#        XYt_1(fechas, values, fechas_u, values_u, stitle, ylabel, legends, dst)
 
     con.close()
 
@@ -131,11 +137,34 @@ def file_name_get(project, row):
     return sname
 
 
-def ufechas_get(project, row, fechas):
+def fechas_u_get(row_u, fechas):
     """
     forma la lista de fechas de los umbrales
     """
-    pass
+    fechas_u = []
+    for row_u1 in row_u:
+        if fechas[0] > row_u1[2]:
+            fecha_u1 = fechas[0]
+        else:
+            fecha_u1 = row_u1[2]
+        if row_u1[3] is None:
+            fecha_u2 = fechas[-1]
+        elif len(row_u1[3].strip()) == 0:
+            fecha_u2 = fechas[-1]
+        elif fechas[0] < row_u1[3]
+            fecha_u2 = fechas[-1]
+        else:
+            fecha_u2 = row_u1[3]
+        fechas_u.append((fecha_u1, fecha_u2))
+    return fechas_u
+
+
+def values_u_get(row_u):
+    """
+    forma la lista de valores de los umbrales
+    """
+    values_u = [(row_u1[1], row_u1[1]) for row_u1 in row_u:]
+    return values_u
 
 
 def XYt_1(xdate, y, stitle, ylabel, dst):
