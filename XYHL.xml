@@ -9,15 +9,14 @@ Configuración de los proyectos para hacer gráficos temporales con umbrales:
 2.2 file name: nombre del fichero de salida. Debe contener al menos un {} para identificar unívocamente cada fichero
 		Contiene tantos tag column como {}. Column contiene el número de columna cuyo valor se sustituirá por cada {}
 -->
-	<project name="Cuanca Alta piezometría sequía 2018">
+	<project name="Cuenca Alta. Piezometría Sequía 2018">
 		<dir_out>E:\WORK\CHS\Mingogil\xy</dir_out>
 		<db>E:\BBDD\ipasub97.mdb</db>
-		<select_master>
-		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, ACUIFEROS.MASUB, IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.UMBRAL, IPA1_UMBRAL.FECHA1, IPA1_UMBRAL.FECHA2
+		<select_master id_column="1">
+		SELECT IPA1.COD, IPA1.TOPONIMIA, ACUIFEROS.NOMACU, ACUIFEROS.MASUB, IPA1_UMBRAL.COD_UMBRAL
 		FROM (ACUIFEROS INNER JOIN IPA1 ON ACUIFEROS.COD_ACU = IPA1.ACUIFERO) INNER JOIN IPA1_UMBRAL ON IPA1.COD = IPA1_UMBRAL.COD
 		WHERE IPA1_UMBRAL.COD_UMBRAL='DIA20111215'
 		ORDER BY IPA1.COD;
-			<parameter_select_data_column>1</parameter_select_data_column>
 			<file_name>{}_{}_{}.png
 				<column>3</column>
 				<column>1</column>
@@ -27,24 +26,30 @@ Configuración de los proyectos para hacer gráficos temporales con umbrales:
 		<select_data fecha_column="2" value_column="4">
 		SELECT IPA2.COD, IPA2.FECHA, IPA2.SITUACION, [ipa1].[z]-[pnp] AS CNP
 		FROM IPA1 INNER JOIN IPA2 ON IPA1.COD = IPA2.COD
-		WHERE IPA2.COD=?;
+		WHERE IPA2.COD=?
+		ORDER BY IPA2.FECHA;
 		</select_data>
-		<select_umbrales>
-			SELECT IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.UMBRAL, IPA1_UMBRAL.FECHA1, IPA1_UMBRAL.FECHA2
+		<select_umbrales umbral_column="3">
+			SELECT IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.PARAMETRO, IPA1_UMBRAL.UMBRAL
 			FROM IPA1_UMBRAL
-			WHERE IPA1_UMBRAL.COD=?
-			ORDER BY IPA1_UMBRAL.COD; 
+			WHERE IPA1_UMBRAL.COD=? AND IPA1_UMBRAL.PARAMETRO='CNP ND'
+			ORDER BY IPA1_UMBRAL.COD, IPA1_UMBRAL.COD_UMBRAL, IPA1_UMBRAL.PARAMETRO;
 		</select_umbrales>
 		<graph y_axis_name='CNP m s.n.m.'>
-			<title>Evolución piezométrica en el sondeo {} ({})
+			<title>Evolución piezométrica sondeo {} ({})
 				<column>2</column>
 				<column>1</column>
 			</title>
 			<title>Acuífero {}
 				<column>3</column>
 			</title>
-			<legend text='{}' column='1' />
-			<legend text='Umbral {}' column='5'/> 
+			<legend_master>'{}'
+				<column>1</column>
+			</legend_master>
+			<legend_umbrales>Umbral {} {}
+				<column>1</column>
+				<column>2</column>
+			</legend_umbrales>
 		</graph>
 	</project>
 </xyhl>
