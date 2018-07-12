@@ -15,6 +15,7 @@ if __name__ == "__main__":
         from datetime import timedelta
         from time import time
         from XYHL import select_project, make_graphs
+        import log_file as lf
 
         project = select_project(FILE_INI_XML)
         startTime = time()
@@ -25,5 +26,8 @@ if __name__ == "__main__":
         print('The script took {0}'.format(str(timedelta(seconds=xtime))))
     except Exception as e:
         logging.error(traceback.format_exc())
+        MSG = '\n{}'.format(traceback.format_exc())
+        lf.write(MSG)
     finally:
+        lf.to_file()
         print('fin')
